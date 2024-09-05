@@ -4,6 +4,8 @@ import id.my.hendisantika.oracle.entity.Employee;
 import id.my.hendisantika.oracle.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -27,4 +29,8 @@ class EmployeeController {
         return employeeRepository.findAll();
     }
 
+    @PostMapping("/employees")
+    Employee newEmployee(@RequestBody Employee newEmployee) {
+        return employeeRepository.save(newEmployee);
+    }
 }

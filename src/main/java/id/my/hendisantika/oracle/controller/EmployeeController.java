@@ -4,6 +4,7 @@ import id.my.hendisantika.oracle.entity.Employee;
 import id.my.hendisantika.oracle.exception.EmployeeNotFoundException;
 import id.my.hendisantika.oracle.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,5 +56,10 @@ class EmployeeController {
                     newEmployee.setId(id);
                     return employeeRepository.save(newEmployee);
                 });
+    }
+
+    @DeleteMapping("/employees/{id}")
+    void deleteEmployee(@PathVariable Long id) {
+        employeeRepository.deleteById(id);
     }
 }

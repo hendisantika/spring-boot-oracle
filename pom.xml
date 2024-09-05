@@ -87,6 +87,13 @@
                     </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgs>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

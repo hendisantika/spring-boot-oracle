@@ -1,7 +1,9 @@
 package id.my.hendisantika.oracle.controller;
 
+import id.my.hendisantika.oracle.entity.Employee;
 import id.my.hendisantika.oracle.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -19,4 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 class EmployeeController {
 
     private final EmployeeRepository employeeRepository;
+
+    @GetMapping("/employees")
+    public Iterable<Employee> all() {
+        return employeeRepository.findAll();
+    }
+
 }

@@ -28,6 +28,11 @@
         </dependency>
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc11</artifactId>
+            <version>23.2.0.0</version> <!-- Replace with the latest version -->
+        </dependency>
+        <dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ucp</artifactId>
             <version>23.7.0.25.01</version>
         </dependency>
@@ -44,7 +49,12 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-docker-compose</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
         <!-- Metrics -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

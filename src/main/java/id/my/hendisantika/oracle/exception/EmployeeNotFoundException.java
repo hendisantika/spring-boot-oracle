@@ -10,11 +10,11 @@ package id.my.hendisantika.oracle.exception;
  * Time: 03.52
  * To change this template use File | Settings | File Templates.
  */
-class EmployeeNotFoundException extends RuntimeException {
+public class EmployeeNotFoundException extends RuntimeException {
 
     private static final long serialVersionUID = 7768215094663842819L;
 
-    EmployeeNotFoundException(Long id) {
+    public EmployeeNotFoundException(Long id) {
         super("Could not find employee " + id);
     }
 }

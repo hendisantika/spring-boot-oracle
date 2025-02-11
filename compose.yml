@@ -1,0 +1,22 @@
+services:
+  # Oracle service (label used to access the service container)
+  oracle23:
+    # Docker Hub image (feel free to change the tag "latest" to any other available one)
+    image: gvenzl/oracle-free:23
+
+    # Provide passwords and other environment variables to container
+    environment:
+      ORACLE_PASSWORD: 53cret
+      #      ORACLE_RANDOM_PASSWORD: false
+      APP_USER: yu71
+      APP_USER_PASSWORD: 53cret
+
+    # Forward Oracle port
+    ports:
+      - "1521:1521"
+    # Provide healthcheck script options for startup
+    healthcheck:
+      test: [ "CMD-SHELL", "healthcheck.sh" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10

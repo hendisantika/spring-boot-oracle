@@ -73,3 +73,7 @@ sql sys/Welcome123@//172.12.0.2:1521/pdb1 as sysdba
 ```
 
 Well, that’s about everything we need! In the next post we’ll get started building a Spring Boot microservice!
+
+References:
+
+https://container-registry.oracle.com/ords/f?p=113:4:116017968320693:::4:P4_REPOSITORY,AI_REPOSITORY,AI_REPOSITORY_NAME,P4_REPOSITORY_NAME,P4_EULA_ID,P4_BUSINESS_AREA_ID:1863,1863,Oracle%20Database%20Free,Oracle%20Database%20Free,1,0&cs=3DSAUVLSZbdfglB7Rii5T9zExv68CVTS2bbCJ2psK0XheSEE4LRbHmtRyKvzaEMe7mM8KbHMv2-EABj-37tHsYA

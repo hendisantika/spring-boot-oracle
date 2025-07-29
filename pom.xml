@@ -24,12 +24,12 @@
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc11</artifactId>
-            <version>23.8.0.25.04</version>
+            <version>23.9.0.25.07</version>
         </dependency>
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc11</artifactId>
-            <version>23.8.0.25.04</version> <!-- Replace with the latest version -->
+            <version>23.9.0.25.07</version> <!-- Replace with the latest version -->
         </dependency>
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>

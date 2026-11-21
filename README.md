@@ -1,79 +1,130 @@
 # spring-boot-oracle
 
-Run the Spring Boot application locally
+[![Java CI with Maven](https://github.com/hendisantika/spring-boot-oracle/actions/workflows/maven.yml/badge.svg)](https://github.com/hendisantika/spring-boot-oracle/actions/workflows/maven.yml)
+![Java](https://img.shields.io/badge/Java-25-orange?logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.x-6DB33F?logo=springboot)
+![Oracle](https://img.shields.io/badge/Oracle%20Database-23ai%20Free-F80000?logo=oracle)
+
+A simple Employee REST API built with **Spring Boot** + **Spring Data JDBC** on top of **Oracle Database 23ai Free**.
+
+## Tech Stack
+
+| Component        | Version / Tool                                  |
+|------------------|-------------------------------------------------|
+| Java             | **25** (Temurin recommended)                    |
+| Spring Boot      | 4.1.x (Web, Data JDBC, Actuator, Docker Compose) |
+| Database         | Oracle Database 23ai Free (`gvenzl/oracle-free`) |
+| JDBC Driver      | `ojdbc11` + `ucp`                               |
+| Build            | Maven Wrapper (`./mvnw`)                        |
+| Testing          | JUnit 5, Testcontainers (Oracle Free)           |
+| CI               | GitHub Actions                                  |
+| Dependency bots  | Dependabot (Maven, GitHub Actions, Docker Compose) |
+
+## Prerequisites
+
+- JDK **25**
+- Docker (used by Spring Boot Docker Compose support and by Testcontainers)
+
+Check your Java version:
 
 ```shell
-mvnw clean package -Dnet.bytebuddy.experimental=true
-mvnw clean spring-boot:run
+java -version
 ```
 
-### Oracle Database
+## Running the Application Locally
 
-And last, but not least, you will need the Oracle Database container image so we can run a local database to test
-against.
-If you don’t already have it, you will need to go to Oracle Container Registry first, and navigate to “Database,” then
-“Enterprise,” and accept the license agreement, then pull the image with these commands:
+The project ships with a [`compose.yml`](compose.yml) that starts Oracle Database 23ai Free. Thanks to
+`spring-boot-docker-compose`, the container is started automatically when you run the app:
+
+```shell
+./mvnw spring-boot:run
+```
+
+Or start the database manually first:
+
+```shell
+docker compose up -d
+./mvnw spring-boot:run
+```
+
+Default connection settings (see [`application.properties`](src/main/resources/application.properties)):
+
+| Property | Value                                        |
+|----------|----------------------------------------------|
+| URL      | `jdbc:oracle:thin:@//localhost:1521/FREEPDB1` |
+| Username | `yu71`                                       |
+| Password | `53cret`                                     |
+
+Create the `EMPLOYEE` table and sample data using [`script/EMPLOYEE.SQL`](script/EMPLOYEE.SQL).
+
+## Build & Test
+
+```shell
+./mvnw clean package
+```
+
+Integration tests spin up an Oracle Free container via **Testcontainers** (`gvenzl/oracle-free:23-slim-faststart`)
+and wire it automatically with `@ServiceConnection`, so no local database is needed — only Docker.
+
+## REST Endpoints
+
+| Method   | Path              | Description                  |
+|----------|-------------------|------------------------------|
+| `GET`    | `/employees`      | List all employees           |
+| `GET`    | `/employees/{id}` | Get employee by id           |
+| `POST`   | `/employees`      | Create a new employee        |
+| `PUT`    | `/employees/{id}` | Replace / upsert an employee |
+| `DELETE` | `/employees/{id}` | Delete an employee           |
+
+Example:
+
+```shell
+curl -X POST http://localhost:8080/employees \
+  -H "Content-Type: application/json" \
+  -d '{"name":"JOHN","job":"CLERK","salary":7902}'
+
+curl http://localhost:8080/employees
+```
+
+Actuator health check: `GET http://localhost:8080/actuator/health`
+
+## CI/CD & Dependency Management
+
+- **GitHub Actions** ([`.github/workflows/maven.yml`](.github/workflows/maven.yml)) builds and tests the project on
+  JDK 25 for every push and pull request to `main`, then submits the Maven dependency graph.
+- **Dependabot** ([`.github/dependabot.yml`](.github/dependabot.yml)) keeps dependencies up to date:
+    - Maven — daily, grouped (Spring Boot, Oracle JDBC, Testcontainers, Maven plugins)
+    - GitHub Actions — weekly, grouped
+    - Docker Compose images — weekly
+
+## Using the Oracle Enterprise Image (Optional)
+
+If you prefer the official Oracle image, log in to the Oracle Container Registry (navigate to *Database → Enterprise*
+and accept the license agreement first), then:
 
 ```shell
 docker login container-registry.oracle.com -u your.name@wherever.com
 docker pull container-registry.oracle.com/database/enterprise:21.3.0.0
-```
 
-Then you can start a database with this command:
-
-```shell
 docker run -d \
---name oracle-db \
--p 1521:1521 \
--e ORACLE_PWD=Welcome123 \
--e ORACLE_SID=ORCL \
--e ORACLE_PDB=PDB1 \
-container-registry.oracle.com/database/enterprise:21.3.0.0
+  --name oracle-db \
+  -p 1521:1521 \
+  -e ORACLE_PWD=Welcome123 \
+  -e ORACLE_SID=ORCL \
+  -e ORACLE_PDB=PDB1 \
+  container-registry.oracle.com/database/enterprise:21.3.0.0
+
+docker logs -f oracle-db   # wait for "DATABASE IS READY TO USE!"
 ```
 
-The first time you start it up, it will create a database instance for you. This takes a few minutes, you can watch the
-logs to see when it is done:
+You can connect using [Oracle SQLcl](https://download.oracle.com/otn_software/java/sqldeveloper/sqlcl-latest.zip):
 
 ```shell
-docker logs -f oracle-db
+sql sys/Welcome123@//localhost:1521/pdb1 as sysdba
 ```
 
-You will see this message in the logs when it is ready:
+## References
 
-```shell
-#########################
-DATABASE IS READY TO USE!
-#########################
-```
-
-You can then stop and start the database container as needed – you won’t need to wait for it to create the database
-instance each time, it will stop and start in just a second or two.
-
-```shell
-docker stop oracle-db
-docker start oracle-db
-```
-
-You are going to want to grab its IP address for later on, you can do that with this command:
-
-```shell
-docker inspect oracle-db | grep IPAddress
-```
-
-This container image has SQL*Plus in it, and you can use that as a database command line client, but I prefer the new
-Oracle SQLcl which is a lot nicer – it has completion and arrow key navigation and lots of other cool new features.
-Here’s a permalink for the latest version: https://download.oracle.com/otn_software/java/sqldeveloper/sqlcl-latest.zip
-
-You can just unzip this and add it to your path too, like Maven and Java.
-
-You can connect to the database using SQLcl like this (use the IP address you got above):
-
-```shell
-sql sys/Welcome123@//172.12.0.2:1521/pdb1 as sysdba
-```
-
-Well, that’s about everything we need! In the next post we’ll get started building a Spring Boot microservice!
-
-References:
-
-https://container-registry.oracle.com/ords/f?p=113:4:116017968320693:::4:P4_REPOSITORY,AI_REPOSITORY,AI_REPOSITORY_NAME,P4_REPOSITORY_NAME,P4_EULA_ID,P4_BUSINESS_AREA_ID:1863,1863,Oracle%20Database%20Free,Oracle%20Database%20Free,1,0&cs=3DSAUVLSZbdfglB7Rii5T9zExv68CVTS2bbCJ2psK0XheSEE4LRbHmtRyKvzaEMe7mM8KbHMv2-EABj-37tHsYA
+- [Oracle Database Free container images](https://github.com/gvenzl/oci-oracle-free)
+- [Getting started using JDBC with Oracle](https://www.oracle.com/database/technologies/getting-started-using-jdbc.html)
+- [Spring Boot Testcontainers support](https://docs.spring.io/spring-boot/reference/testing/testcontainers.html)
